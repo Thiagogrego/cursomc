@@ -26,4 +26,10 @@ public class CategoriaService {
 		return categoria.get();
 		
 	}
+	
+	public Categoria save(Categoria categoria) {
+		categoria.setId(null);
+		return repo.save(categoria);
+	}
+	
 }
