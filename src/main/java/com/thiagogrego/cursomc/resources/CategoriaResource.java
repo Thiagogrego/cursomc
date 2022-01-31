@@ -1,6 +1,8 @@
 package com.thiagogrego.cursomc.resources;
 
 import java.net.URI;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.thiagogrego.cursomc.domain.Categoria;
+import com.thiagogrego.cursomc.dto.CategoriaDTO;
 import com.thiagogrego.cursomc.services.CategoriaService;
 
 @RestController
@@ -23,6 +26,13 @@ public class CategoriaResource {
 	
 	@Autowired
 	private CategoriaService service;
+	
+	@GetMapping
+	public ResponseEntity<List<CategoriaDTO>> findAll() {
+		List<Categoria> categorias = service.findAll();
+		List<CategoriaDTO> categoriasDTO = categorias.stream().map(dto -> new CategoriaDTO(dto)).collect(Collectors.toList());
+		return ResponseEntity.ok(categoriasDTO);
+	}
 	
 	@GetMapping("/{id}")
 	public ResponseEntity<Categoria> findById(@PathVariable Integer id) {
