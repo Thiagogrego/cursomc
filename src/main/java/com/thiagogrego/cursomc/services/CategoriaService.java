@@ -32,4 +32,8 @@ public class CategoriaService {
 		return repo.save(categoria);
 	}
 	
+	public Categoria update(Categoria categoria) {
+		findById(categoria.getId());
+		return repo.save(categoria);
+	}
 }
