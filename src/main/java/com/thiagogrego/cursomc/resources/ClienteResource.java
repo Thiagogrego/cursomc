@@ -20,9 +20,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import com.thiagogrego.cursomc.domain.Categoria;
 import com.thiagogrego.cursomc.domain.Cliente;
-import com.thiagogrego.cursomc.dto.CategoriaDTO;
 import com.thiagogrego.cursomc.dto.ClienteDTO;
 import com.thiagogrego.cursomc.dto.ClienteNewDTO;
 import com.thiagogrego.cursomc.services.ClienteService;
@@ -38,7 +36,7 @@ public class ClienteResource {
 	public ResponseEntity<List<ClienteDTO>> findAll() {
 		List<Cliente> clientes = service.findAll();
 		List<ClienteDTO> clientesDTO = clientes.stream().map(dto -> new ClienteDTO(dto)).collect(Collectors.toList());
-		return ResponseEntity.ok(clientesDTO);
+		return ResponseEntity.ok().body(clientesDTO);
 	}
 	
 	@GetMapping("/{id}")
