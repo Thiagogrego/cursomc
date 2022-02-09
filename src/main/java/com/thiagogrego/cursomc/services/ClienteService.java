@@ -3,7 +3,6 @@ package com.thiagogrego.cursomc.services;
 import java.util.List;
 import java.util.Optional;
 
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
@@ -16,11 +15,14 @@ import org.springframework.transaction.annotation.Transactional;
 import com.thiagogrego.cursomc.domain.Cidade;
 import com.thiagogrego.cursomc.domain.Cliente;
 import com.thiagogrego.cursomc.domain.Endereco;
+import com.thiagogrego.cursomc.domain.enums.Perfil;
 import com.thiagogrego.cursomc.domain.enums.TipoCliente;
 import com.thiagogrego.cursomc.dto.ClienteDTO;
 import com.thiagogrego.cursomc.dto.ClienteNewDTO;
 import com.thiagogrego.cursomc.repositories.ClienteRepository;
 import com.thiagogrego.cursomc.repositories.EnderecoRepository;
+import com.thiagogrego.cursomc.security.UserSS;
+import com.thiagogrego.cursomc.services.exceptions.AuthorizationException;
 import com.thiagogrego.cursomc.services.exceptions.DataIntegrityException;
 import com.thiagogrego.cursomc.services.exceptions.ObjectNotFoundException;
 
@@ -41,6 +43,12 @@ public class ClienteService {
 	}
 
 	public Cliente findById(Integer id) {
+		
+		UserSS user = UserService.authenticated();
+		if (user==null || !user.hasRole(Perfil.ADMIN) && !id.equals(user.getId())) {
+			throw new AuthorizationException("Acesso negado");
+		}
+		
 		Optional<Cliente> cliente = repo.findById(id);
 
 		if (cliente.isEmpty()) {
