@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import com.thiagogrego.cursomc.services.exceptions.AuthorizationException;
 import com.thiagogrego.cursomc.services.exceptions.DataIntegrityException;
+import com.thiagogrego.cursomc.services.exceptions.FileStorageException;
 import com.thiagogrego.cursomc.services.exceptions.ObjectNotFoundException;
 
 @ControllerAdvice
@@ -47,6 +48,13 @@ public class ResourceExceptionHandler {
 		
 		StandardError err = new StandardError(HttpStatus.FORBIDDEN.value(), ex.getMessage(), System.currentTimeMillis());
 		return ResponseEntity.status(HttpStatus.FORBIDDEN).body(err);
+	}
+	
+	@ExceptionHandler(FileStorageException.class)
+	public ResponseEntity<StandardError> file(FileStorageException ex, HttpServletRequest request){
+		
+		StandardError err = new StandardError(HttpStatus.BAD_REQUEST.value(), ex.getMessage(), System.currentTimeMillis());
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(err);
 	}
 }
 

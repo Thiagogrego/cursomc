@@ -19,11 +19,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.thiagogrego.cursomc.domain.Cliente;
 import com.thiagogrego.cursomc.dto.ClienteDTO;
 import com.thiagogrego.cursomc.dto.ClienteNewDTO;
+import com.thiagogrego.cursomc.dto.UploadFileResponseDTO;
 import com.thiagogrego.cursomc.services.ClienteService;
 
 @RestController
@@ -85,5 +87,16 @@ public class ClienteResource {
 		return ResponseEntity.ok().body(clientesDTO);
 	}
 
+	@PostMapping("/uploadFile")
+    public UploadFileResponseDTO uploadFile(@RequestParam("file") MultipartFile file) {
+        String fileName = service.storeFile(file);
 
+        String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath()
+                .path("/downloadFile/")
+                .path(fileName)
+                .toUriString();
+
+        return new UploadFileResponseDTO(fileName, fileDownloadUri,
+                file.getContentType(), file.getSize());
+    }
 }
