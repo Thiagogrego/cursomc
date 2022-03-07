@@ -6,18 +6,27 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 import javax.imageio.ImageIO;
 
 import org.apache.commons.io.FilenameUtils;
 import org.imgscalr.Scalr;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.thiagogrego.cursomc.config.UploadFileConfig;
 import com.thiagogrego.cursomc.services.exceptions.FileStorageException;
+import com.thiagogrego.cursomc.services.exceptions.ObjectNotFoundException;
 
 @Service
 public class ImageService {
+	
+	@Autowired
+	private UploadFileConfig uploadFileConfig;
+	
 	public BufferedImage getJpgImageFromFile(MultipartFile uploadedFile) {
 		String ext = FilenameUtils.getExtension(uploadedFile.getOriginalFilename());
 		if (!"png".equals(ext) && !"jpg".equals(ext)) {
@@ -64,4 +73,18 @@ public class ImageService {
 	public BufferedImage resize(BufferedImage sourceImg, int size) {
 		return Scalr.resize(sourceImg, Scalr.Method.ULTRA_QUALITY, size);
 	}
-}
+	
+	
+  public byte[] getBytes() {
+		try {
+			String dir = uploadFileConfig.getUploadDir(); 
+			return getByte(Path.of(dir));
+		
+		} catch (Exception e) {
+			throw new ObjectNotFoundException("Não foi possível carregar a imagem");
+		}
+}		
+		private static byte[] getByte(Path path) throws IOException {
+			return Files.readAllBytes(path);
+		}
+}		
